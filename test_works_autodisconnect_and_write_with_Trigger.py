@@ -93,7 +93,8 @@ def movementFunc():
 
 #Start Signal -> turns LED on
 off()
-#Threading
+
+#Threading setup
 t1 = threading.Thread(target = getPoints)
 t2 = threading.Thread(target = movementFunc)
 t3 = threading.Thread(target = testSignal)
