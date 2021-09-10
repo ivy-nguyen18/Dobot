@@ -1,7 +1,7 @@
 count = None
 input2 = None
 
-"""Describe this function...
+"""Press the button 10 times then it will exit
 """
 def button():
   global count, input2
@@ -16,13 +16,9 @@ def button():
   print('Ending')
   print(count)
 
-"""Describe this function...
-"""
 def new():
   print('Starting...')
 
-"""Describe this function...
-"""
 def press():
   global input2, count
   if input2 == 1:
