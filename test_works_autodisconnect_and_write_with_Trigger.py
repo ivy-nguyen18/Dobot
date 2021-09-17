@@ -1,4 +1,3 @@
-#Magic Box+Magician Lite
 import threading
 import os
 import os.path
@@ -24,6 +23,11 @@ def signal():
 		print('eio06 OFF')
 		dType.dSleep(500)
 
+#getting input signal
+def button():
+	dType.SetIOMultiplexingExtEx(api, 10, 3, 1);
+
+#sending output signal
 def testSignal():
 	dType.SetIOMultiplexingExtEx(api, 6, 1, 1)
 	while (True):
@@ -42,9 +46,9 @@ def getPoints():
 	#change file name per run (otherwise, it will be overwritten)
 	file = open("filename.txt", "w")
 	print(os.path.dirname(os.path.abspath("filename.txt")))
-	headers = "time(ms)\t trigger\t\t x\t\t y\t\t z\n\n"
+	headers = "time(ms)\ttrigger\tinput\tx\t\ty\t\t\tz\n\n"
 	file.write(headers)
-	
+
 	while(flag == 0):
 		#get time
 		utc_dt = datetime.now(timezone.utc) # UTC time
@@ -52,7 +56,7 @@ def getPoints():
 
 		#format data
 		txt = "{:<10}"
-		data = timeMS + "\t" + str(dType.GetIODOExt(api,6)) + "\t" + txt.format(dType.GetPoseEx(api,1)) + "\t" + txt.format(dType.GetPoseEx(api,2)) + "\t" + txt.format(dType.GetPoseEx(api,3)) + "\n"
+		data = timeMS + "\t" + str(dType.GetIODOExt(api,6)) + "\t" + str(dType.GetIODIExt(api,10)[0]) + "\t" +  txt.format(dType.GetPoseEx(api,1)) + "\t" + txt.format(dType.GetPoseEx(api,2)) + "\t" + txt.format(dType.GetPoseEx(api,3)) + "\n"
 
 		#write to file
 		file.write(data)
@@ -82,7 +86,7 @@ def movementFunc():
 			dType.SetPTPCmdEx(api, 7, (-5),  0,  0, 0, 1)
 			dType.dSleep(2000)
 			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
-	
+
 	setPenPosition()
 	move()
 	move2()
@@ -93,8 +97,7 @@ def movementFunc():
 
 #Start Signal -> turns LED on
 off()
-
-#Threading setup
+#Threading
 t1 = threading.Thread(target = getPoints)
 t2 = threading.Thread(target = movementFunc)
 t3 = threading.Thread(target = testSignal)
