@@ -10,9 +10,11 @@ def button():
   while True:
     input2 = dType.GetIODIExt(api, 10)[0]
     print(input2)
-    if input2 == 1:
+    if (dType.GetIODIExt(api, 10)[0]) == 1:
       count = count + 1
-  print(count)
+      if count == 10:
+        break
+  print('END')
 
 
 button()
