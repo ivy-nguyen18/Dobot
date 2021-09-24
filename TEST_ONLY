@@ -1,0 +1,18 @@
+count = None
+input2 = None
+
+"""Describe this function...
+"""
+def button():
+  global count, input2
+  dType.SetIOMultiplexingExtEx(api, 10, 3, 1)
+  count = 0
+  while True:
+    input2 = dType.GetIODIExt(api, 10)[0]
+    print(input2)
+    if input2 == 1:
+      count = count + 1
+  print(count)
+
+
+button()
