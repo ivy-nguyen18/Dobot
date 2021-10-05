@@ -5,12 +5,12 @@ input2 = None
 """
 def button():
   global count, input2
-  dType.SetIOMultiplexingExtEx(api, 10, 3, 1)
+  dType.SetIOMultiplexingExtEx(api, 7, 3, 1)
   count = 0
   while True:
-    input2 = dType.GetIODIExt(api, 10)[0]
+    input2 = dType.GetIODIExt(api, 7)[0]
     print(input2)
-    if (dType.GetIODIExt(api, 10)[0]) == 1:
+    if (dType.GetIODIExt(api, 7)[0]) == 1:
       count = count + 1
       if count == 10:
         break

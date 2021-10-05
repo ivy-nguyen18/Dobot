@@ -25,7 +25,7 @@ def signal():
 
 #getting input signal
 def button():
-	dType.SetIOMultiplexingExtEx(api, 10, 3, 1);
+	dType.SetIOMultiplexingExtEx(api, 7, 3, 1);
 
 #sending output signal
 def testSignal():
@@ -56,7 +56,7 @@ def getPoints():
 
 		#format data
 		txt = "{:<10}"
-		data = timeMS + "\t" + str(dType.GetIODOExt(api,6)) + "\t" + str(dType.GetIODIExt(api,10)[0]) + "\t" +  txt.format(dType.GetPoseEx(api,1)) + "\t" + txt.format(dType.GetPoseEx(api,2)) + "\t" + txt.format(dType.GetPoseEx(api,3)) + "\n"
+		data = timeMS + "\t" + str(dType.GetIODOExt(api,6)) + "\t" + str(dType.GetIODIExt(api,7)[0]) + "\t" +  txt.format(dType.GetPoseEx(api,1)) + "\t" + txt.format(dType.GetPoseEx(api,2)) + "\t" + txt.format(dType.GetPoseEx(api,3)) + "\n"
 
 		#write to file
 		file.write(data)
