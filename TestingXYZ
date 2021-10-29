@@ -1,0 +1,205 @@
+import threading
+import os
+import os.path
+from os import path
+from datetime import datetime, timezone
+
+dType.SetQueuedCmdClear(api)
+dType.SetQueuedCmdStopExec(api)
+dType.SetQueuedCmdStartExec(api)
+speed2 = None
+speed1 = None
+flag = 0
+
+
+#Led blinks three times using output EIO06
+def signal():
+	dType.SetIOMultiplexingExtEx(api, 6, 1, 1)
+	for count2 in range(3):
+		dType.SetIODOExtEx(api, 6, 1, 1)
+		print('eio06 ON')
+		dType.dSleep(500)
+		dType.SetIODOExtEx(api, 6, 0, 1)
+		print('eio06 OFF')
+		dType.dSleep(500)
+
+#getting input signal
+def button():
+	dType.SetIOMultiplexingExtEx(api, 7, 3, 1);
+
+#sending output signal
+def testSignal():
+	dType.SetIOMultiplexingExtEx(api, 6, 1, 1)
+	while (True):
+		dType.SetIODOExtEx(api, 6, 1, 1)
+		dType.SetIODOExtEx(api, 6, 0, 1)
+
+def on():
+	dType.SetIOMultiplexingExtEx(api, 6, 1, 1)
+	dType.SetIODOExtEx(api, 6, 1, 1)
+
+def off():
+	dType.SetIODOExtEx(api, 6, 0, 1)
+
+
+def getPoints():
+	#change file name per run (otherwise, it will be overwritten)
+	file = open("filename.txt", "w")
+	print(os.path.dirname(os.path.abspath("filename.txt")))
+	headers = "time(ms)\ttrigger\tinput\tx\t\ty\t\t\tz\n\n"
+	file.write(headers)
+
+	while(flag == 0):
+		#get time
+		utc_dt = datetime.now(timezone.utc) # UTC time
+		timeMS = utc_dt.astimezone().strftime('%H:%M:%S.%f')[:-3]
+
+		#format data
+		txt = "{:<10}"
+		data = timeMS + "\t" + str(dType.GetIODOExt(api,6)) + "\t" + str(dType.GetIODIExt(api,7)[0]) + "\t" +  txt.format(dType.GetPoseEx(api,1)) + "\t" + txt.format(dType.GetPoseEx(api,2)) + "\t" + txt.format(dType.GetPoseEx(api,3)) + "\n"
+
+		#write to file
+		file.write(data)
+
+		#save the file after each time it is written ( f.close not needed)
+		file.flush()
+		os.fsync(file.fileno())
+
+def movementFunc():
+	def setPenPosition():
+		dType.SetPTPCmdEx(api, 2, 270, 0, (-80.5), 0, 1)
+
+	def StartWait():
+		global speed2
+		for count in range(1):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  0, 0, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  0, 0, 1)
+			dType.dSleep(25000)
+			speed2 = dType.GetArmSpeedRatio(api, 1)[0]
+		off()
+	def move():
+		global speed1
+		for count2 in range(1):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  2,  0, 0, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  (-2),  0, 0, 1)
+			dType.dSleep(3000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+	def moveX1():
+		global speed1
+		for count2 in range(60):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 1,  0,  0, 0, 1)
+			dType.SetPTPCmdEx(api, 7, (-1),  0,  0, 0, 1)
+			dType.dSleep(1000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+	def moveX3():
+		global speed1
+		for count2 in range(60):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 3,  0,  0, 0, 1)
+			dType.SetPTPCmdEx(api, 7, (-3),  0,  0, 0, 1)
+			dType.dSleep(1000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+	def moveX5():
+		global speed1
+		for count2 in range(60):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 5,  0,  0, 0, 1)
+			dType.SetPTPCmdEx(api, 7, (-5),  0,  0, 0, 1)
+			dType.dSleep(1000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+	def moveY1():
+		global speed1
+		for count2 in range(60):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  1,  0, 0, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  (-1),  0, 0, 1)
+			dType.dSleep(1000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+	def moveY3():
+		global speed1
+		for count2 in range(60):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  3,  0, 0, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  (-3),  0, 0, 1)
+			dType.dSleep(1000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+	def moveY5():
+		global speed1
+		for count2 in range(60):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  5,  0, 0, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  (-5),  0, 0, 1)
+			dType.dSleep(1000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+	def moveZ1():
+		global speed1
+		for count2 in range(60):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  1, 0, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  (-1), 0, 1)
+			dType.dSleep(1000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+	def moveZ3():
+		global speed1
+		for count2 in range(60):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  3, 0, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  (-3), 0, 1)
+			dType.dSleep(1000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+	def moveZ5():
+		global speed1
+		for count2 in range(60):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  5, 0, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  (-5), 0, 1)
+			dType.dSleep(1000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+	def WaitEnd():
+		global speed1
+		for count2 in range(1):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  0, 0, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  0, 0, 1)
+			dType.dSleep(35000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+	
+	setPenPosition()
+	StartWait()
+	move()
+	#moveX1()
+	#moveX3()
+	#moveX5()
+	#moveY1()
+	#moveY3()
+	moveY5()
+	#moveZ1()
+	#moveZ3()
+	#moveZ5()
+	WaitEnd()
+
+	#End Signal -> turns LED off
+	off()
+	dType.DisconnectDobot(api)
+
+#Start Signal -> turns LED on
+off()
+#Threading
+t1 = threading.Thread(target = getPoints)
+t2 = threading.Thread(target = movementFunc)
+t3 = threading.Thread(target = testSignal)
+
+t1.start()
+t2.start()
+t3.start()
+
+t1.join()
+t2.join()
+t3.join()
+
+
+#dType.RestartMagicBox(api)
+#dType.DisconnectDobot(api)
