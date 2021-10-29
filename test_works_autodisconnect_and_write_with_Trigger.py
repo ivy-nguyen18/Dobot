@@ -67,7 +67,7 @@ def getPoints():
 
 def movementFunc():
 	def setPenPosition():
-		dType.SetPTPCmdEx(api, 0, 226.3027, 0, (-38.5), 0, 1)
+		dType.SetPTPCmdEx(api, 2, 270, 0, (-80.5), 0, 1)
 		dType.SetARCParams(api,100,100,100,100)
 
 	def move(x, y, z, r, changeX, changeY, changeZ, changeR):
@@ -84,18 +84,40 @@ def movementFunc():
 				dType.SetPTPCmdEx(api, 7, changeX, changeY,  changeZ, changeR, 1)
 			dType.dSleep(1000)
 			speed2 = dType.GetArmSpeedRatio(api, 1)[0]
+	def wait():
+		global speed2
+		for count2 in range(1):
+			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  0, 0, 1)
+			dType.SetPTPCmdEx(api, 7, 0,  0,  0, 0, 1)
+			dType.dSleep(35000)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
 		off()
 
 	def setMove():
 		#move( x, y, z, r, change in x, change in Y, change in Z)
-		move(20,0,0,0, -20,0,0,0)
-		move(0,20,0,0, 0,-20,0,0)
+	
+		move(20,0,0,0, -20,0,0,0) # move on X axis
+		move(0,20,0,0, 0,-20,0,0) # rotate on Y axis
+
+		#Test movement starts here
+		move(1,0,0,0, -1,0,0,0) #move on X by 1
+		move(3,0,0,0, -3,0,0,0) #move on X by 3
+		move(5,0,0,0, -5,0,0,0) #move on X by 5
+		
+		move(0,1,0,0, 0,-1,0,0) #move on Y by 1
+		move(0,3,0,0, 0,-3,0,0) #move on Y by 3
+		move(0,5,0,0, 0,-5,0,0) #move on Y by 5
+
+		move(0,0,1,0, 0,0,-1,0) #move on Z by 1
+		move(0,0,3,0, 0,0,-3,0) #move on Z by 3
+		move(0,0,5,0, 0,0,-5,0) #move on Z by 5
 	
 	setPenPosition()
+	wait(25000)
 	setMove()
-
-	#End Signal -> turns LED off
-	off()
+	wait(35000)
+	
 	dType.DisconnectDobot(api)
 
 #Start Signal -> turns LED on
