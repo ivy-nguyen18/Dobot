@@ -67,13 +67,13 @@ def getPoints():
 
 def movementFunc():
 	def setPenPosition():
-		dType.SetPTPCmdEx(api, 2, 270, 0, (-80.5), 0, 1)
+		#dType.SetPTPCmdEx(api, 2, 270, 0, (-80.5), 0, 1)
+		dType.SetPTPCmdEx(api, 2, 226.3025, 0, (-38.5), 0, 1)
 		dType.SetARCParams(api,100,100,100,100)
 
 	def move(x, y, z, r, changeX, changeY, changeZ, changeR):
 		global speed2
 		currentPosition = dType.GetPose(api)
-		print(currentPosition[0])
 		for count in range(4):
 			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
 			if (y != 0) and (changeY != 0) :
@@ -84,13 +84,13 @@ def movementFunc():
 				dType.SetPTPCmdEx(api, 7, changeX, changeY,  changeZ, changeR, 1)
 			dType.dSleep(1000)
 			speed2 = dType.GetArmSpeedRatio(api, 1)[0]
-	def wait():
+	def wait(waitTime):
 		global speed2
 		for count2 in range(1):
 			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
 			dType.SetPTPCmdEx(api, 7, 0,  0,  0, 0, 1)
 			dType.SetPTPCmdEx(api, 7, 0,  0,  0, 0, 1)
-			dType.dSleep(35000)
+			dType.dSleep(waitTime)
 			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
 		off()
 
@@ -99,15 +99,16 @@ def movementFunc():
 	
 		move(20,0,0,0, -20,0,0,0) # move on X axis
 		move(0,20,0,0, 0,-20,0,0) # rotate on Y axis
+		setPenPosition() #Reset pen position 
 
 		#Test movement starts here
 		move(1,0,0,0, -1,0,0,0) #move on X by 1
 		move(3,0,0,0, -3,0,0,0) #move on X by 3
 		move(5,0,0,0, -5,0,0,0) #move on X by 5
 		
-		move(0,1,0,0, 0,-1,0,0) #move on Y by 1
-		move(0,3,0,0, 0,-3,0,0) #move on Y by 3
-		move(0,5,0,0, 0,-5,0,0) #move on Y by 5
+		#move(0,1,0,0, 0,-1,0,0) #move on Y by 1
+		#move(0,3,0,0, 0,-3,0,0) #move on Y by 3
+		#move(0,5,0,0, 0,-5,0,0) #move on Y by 5
 
 		move(0,0,1,0, 0,0,-1,0) #move on Z by 1
 		move(0,0,3,0, 0,0,-3,0) #move on Z by 3
