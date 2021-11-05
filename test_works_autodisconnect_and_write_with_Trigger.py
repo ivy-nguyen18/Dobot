@@ -69,7 +69,8 @@ def movementFunc():
 	def setPenPosition():
 		dType.SetPTPCmdEx(api, 2, 270, 0, (-80.5), 0, 1)
 		#dType.SetPTPCmdEx(api, 2, 226.3025, 0, (-38.5), 0, 1)
-		dType.SetARCParams(api,100,100,100,100)
+		dType.SetPTPCommonParams(api, 25, 25) #sets arm speed for cartesian and cylindrical coordinates
+
 
 	def move(x, y, z, r, changeX, changeY, changeZ, changeR, J1, changeJ1):    # xyzr for Cartesian coordinate system, J for joint coordinate system
 		global speed2
@@ -84,6 +85,7 @@ def movementFunc():
 				dType.SetPTPCmdEx(api, 7, changeX, changeY,  changeZ, changeR, 1)
 			dType.dSleep(1000)
 			speed2 = dType.GetArmSpeedRatio(api, 1)[0]
+		setPenPosition() #Reset pen position every movement category
 	def wait(waitTime):                                      
 		global speed2
 		for count2 in range(1):
@@ -96,12 +98,7 @@ def movementFunc():
 
 	def setMove():                                                        
 		#move( x, y, z, r, change in x, change in Y, change in Z, J1, change in J1)
-	
-		move(20,0,0,0, -20,0,0,0, 0,0) # move on X axis
-		move(0,0,0,0, 0,0,0,0, 20,-20) # rotate Joint1, around Z axis
-		setPenPosition() #Reset pen position 
 
-		#Test movement starts here
 		move(1,0,0,0, -1,0,0,0, 0,0) #move on X by 1
 		move(3,0,0,0, -3,0,0,0, 0,0) #move on X by 3
 		move(5,0,0,0, -5,0,0,0, 0,0) #move on X by 5
@@ -120,7 +117,7 @@ def movementFunc():
 	
 	setPenPosition()
 	wait(25000)
-	setMove()
+	setMove() 
 	wait(35000)
 	
 	dType.DisconnectDobot(api)
@@ -139,7 +136,3 @@ t3.start()
 t1.join()
 t2.join()
 t3.join()
-
-
-#dType.RestartMagicBox(api)
-#dType.DisconnectDobot(api)
