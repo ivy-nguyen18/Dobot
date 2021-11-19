@@ -69,14 +69,15 @@ def movementFunc():
 	def setPenPosition():
 		dType.SetPTPCmdEx(api, 2, 270, 0, (-80.5), 0, 1)
 		#dType.SetPTPCmdEx(api, 2, 226.3025, 0, (-38.5), 0, 1)
-		dType.SetPTPCommonParams(api, 25, 25) #sets arm speed for cartesian and cylindrical coordinates
+		dType.SetPTPCoordinateParams(api, 1, 1, 0,  0,  1)       #Set the velocity(mm/s) and acceleration(mm/s2) of the Cartesian coordinate axis in PTP mode
+		dType.SetPTPJointParams(api, 1, 0, 0, 0, 0, 0, 0, 0, 1)  #Set the velocity(° /s) and acceleration(° /s2) of the joint coordinate axis in PTP mode
+		dType.SetPTPCommonParams(api, 25, 25) #sets arm speed ratio and acceleration ratio for cartesian and joint coordinates
 
 
 	def move(x, y, z, r, changeX, changeY, changeZ, changeR, J1, changeJ1):    # xyzr for Cartesian coordinate system, J for joint coordinate system
 		global speed2
 		currentPosition = dType.GetPose(api)
 		for count in range(4):                                 
-			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
 			if (J1 != 0):                                    
 				dType.SetPTPCmdEx(api, 4, currentPosition[4] + J1,  currentPosition[5],  currentPosition[6], currentPosition[7], 1)        # mode 4, joint mode in joint coordinate system    
 				dType.SetPTPCmdEx(api, 4, currentPosition[4] + changeJ1,  currentPosition[5],  currentPosition[6], currentPosition[7], 1)
@@ -89,7 +90,6 @@ def movementFunc():
 	def wait(waitTime):                                      
 		global speed2
 		for count2 in range(1):
-			dType.SetArmSpeedRatioEx(api, 1, 100, 1)
 			dType.SetPTPCmdEx(api, 7, 0,  0,  0, 0, 1)
 			dType.SetPTPCmdEx(api, 7, 0,  0,  0, 0, 1)
 			dType.dSleep(waitTime)
