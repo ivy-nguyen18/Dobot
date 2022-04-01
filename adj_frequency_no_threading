@@ -1,0 +1,107 @@
+import threading
+import os
+import os.path
+from os import path
+from datetime import datetime, timezone
+
+dType.SetQueuedCmdClear(api)
+dType.SetQueuedCmdStopExec(api)
+dType.SetQueuedCmdStartExec(api)
+speed2 = None
+speed1 = None
+flag = 0
+
+
+#Led blinks three times using output EIO06
+def signal():
+	dType.SetIOMultiplexingExtEx(api, 6, 1, 1)
+	for count2 in range(3):
+		dType.SetIODOExtEx(api, 6, 1, 1)
+		print('eio06 ON')
+		dType.dSleep(500)
+		dType.SetIODOExtEx(api, 6, 0, 1)
+		print('eio06 OFF')
+		dType.dSleep(500)
+
+#getting input signal
+def button():
+	dType.SetIOMultiplexingExtEx(api, 7, 3, 1);
+
+#sending output signal
+def testSignal():
+	dType.SetIOMultiplexingExtEx(api, 6, 1, 1)
+	while (True):
+		dType.SetIODOExtEx(api, 6, 1, 1)
+		dType.SetIODOExtEx(api, 6, 0, 1)
+
+def on():
+	dType.SetIOMultiplexingExtEx(api, 6, 1, 1)
+	dType.SetIODOExtEx(api, 6, 1, 1)
+
+def off():
+	dType.SetIODOExtEx(api, 6, 0, 1)
+
+
+def getPoints():
+	#change file name per run (otherwise, it will be overwritten)
+	file = open("X_500_500_nopause_5mm_setting100canbedelete.txt", "w")
+	print(os.path.dirname(os.path.abspath("filename1.txt")))
+	headers = "time(ms)\ttrigger\tinput\tx\t\ty\t\t\tz\n\n"
+	file.write(headers)
+	
+	while(flag == 0):
+		#get time
+		utc_dt = datetime.now(timezone.utc) # UTC time
+		timeMS = utc_dt.astimezone().strftime('%H:%M:%S.%f')[:-3]
+
+		#format data
+		txt = "{:<10}"
+		data = timeMS + "\t" + str(dType.GetIODOExt(api,6)) + "\t" + str(dType.GetIODIExt(api,7)[0]) + "\t" +  txt.format(dType.GetPoseEx(api,1)) + "\t" + txt.format(dType.GetPoseEx(api,2)) + "\t" + txt.format(dType.GetPoseEx(api,3)) + "\n"
+
+		#write to file
+		file.write(data)
+
+		#save the file after each time it is written ( f.close not needed)
+		file.flush()
+		os.fsync(file.fileno())
+
+def movementFunc():
+	def setPenPosition():
+		dType.SetHOMECmdEx(api, 0, 1)
+		dType.SetArmSpeedRatioEx(api, 1, 100, 1)
+
+
+	def move(x, y, z, r, J1):  
+		for count in range(10):                                 
+			if (J1 != 0):
+				current_pose = dType.GetPose(api)
+				dType.SetPTPCmdEx(api, 4, current_pose[4] + J1,  current_pose[5],  current_pose[6], current_pose[7], 1)
+				current_pose = dType.GetPose(api)
+				dType.SetPTPCmdEx(api, 4,  current_pose[4] - J1,  current_pose[5],  current_pose[6], current_pose[7], 1)
+			else:
+				dType.SetPTPCmdEx(api, 7, x,  y,  z, r, 1)                                                                                 
+				dType.SetPTPCmdEx(api, 7, -x, -y,  -z, -r, 1)
+
+	def setMove():  #(x, y, z, r, J1)                                                      
+		move(3,0,0,0,0) # rotate Joint1 by +10°
+	
+ 
+	def wait(waitTime):                                      
+		global speed2
+		for count2 in range(1):
+			dType.SetPTPCmdEx(api, 7, 0,  0,  0, 0, 1)
+			speed1 = dType.GetArmSpeedRatio(api, 1)[0]
+		dType.dSleep(waitTime)
+		off()
+	
+	setPenPosition()
+	#wait(5000)
+	setMove() 
+	#wait(5000)
+	
+	dType.DisconnectDobot(api)
+
+#Start Signal -> turns LED on
+off()
+#Threading
+movementFunc()
