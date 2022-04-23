@@ -1,0 +1,24 @@
+#Initial dobot libraries
+
+#functions for movement in x, y, z direction
+def x(t):
+    return func(t)
+
+def y(t):
+    return func(t)
+
+def z(t):
+    return func(t)
+
+#Actual movement function
+def move(x, y, z, interval):
+    t = seconds_from_start of loop
+    while(t < interval):
+        dobot_move_to_position (x(t)*x, y(t)*y, z(t)*z)
+        t = seconds_from start of loop
+
+
+#Main body
+#interval = how long each movement should be
+#x, y, z are binary (0,1): 0 for no movement in that direction, 1 for movement in that direction
+move(x, y, z, interval)
